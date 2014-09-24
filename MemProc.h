@@ -29,7 +29,7 @@
 // ---------- Defines -------------
 
 
-// ------ Class declaration -------
+// ------ Struct declaration -------
 typedef enum {
 
 	SEARCH_TYPE_BYTES = -1,
@@ -87,7 +87,7 @@ memproc_new (char *process_name, char *window_name);
 MemBlock *
 memblock_new (void *data, DWORD addr, int size, MemType type);
 
-// ----------- Methods ------------
+// ----------- Functions ------------
 
 void
 memproc_debug (MemProc *mp);
@@ -136,6 +136,9 @@ memproc_set_absolute_addr (MemProc *mp, DWORD *addr);
 
 void
 memproc_set_default_baseaddr (MemProc *mp, int default_baseaddr);
+
+void
+memblock_debug (MemBlock *mb);
 
 // --------- Destructors ----------
 

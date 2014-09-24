@@ -12,6 +12,7 @@ memchunk_new (HANDLE hProc, MEMORY_BASIC_INFORMATION *meminfo)
 
 	mem->addr = (DWORD) meminfo->BaseAddress;
 	mem->size = meminfo->RegionSize;
+	debug("MemChunk size allocated = 0x%x", mem->size);
 
 	mem->buffer =  malloc (meminfo->RegionSize);
 	memset(mem->buffer, 0, meminfo->RegionSize);

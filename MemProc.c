@@ -103,7 +103,7 @@ memproc_refresh_handle (MemProc *mp)
 	}
 
 	// Get the process handle
-	if ((mp->proc = OpenProcess (PROCESS_ALL_ACCESS, FALSE, mp->pid)) == 0)
+	if ((mp->proc = OpenProcess (PROCESS_ALL_ACCESS, false, mp->pid)) == 0)
 	{
 		warning ("Process is unable to be opened with all access.");
 		return false;
@@ -112,8 +112,8 @@ memproc_refresh_handle (MemProc *mp)
 	// Get the base address
 	if ((mp->base_addr = get_baseaddr (mp->process_name)) == 0)
 	{
-		info ("Base address of the process %s not found. Using the default value 0x%x.", mp->process_name, mp->default_baseaddr);
-		mp->base_addr  = mp->default_baseaddr;
+		info ("Process %s not found.", mp->process_name);
+		mp->base_addr = mp->default_baseaddr;
 	}
 
 	// Get the window handle
@@ -289,6 +289,12 @@ memblock_new (void *data, DWORD addr, int size, MemType type)
 }
 
 void
+memblock_debug (MemBlock *mb)
+{
+	printf("addr = %x - size = %x", (int) mb->addr, mb->size);
+}
+
+void
 memproc_set_absolute_addr (MemProc *mp, DWORD *addr)
 {
 	 (*addr) = (*addr) + mp->base_addr;
@@ -305,7 +311,7 @@ memproc_free (MemProc *memproc)
 {
 	if (memproc != NULL)
 	{
-		bb_queue_free_all (memproc->memchunks, memchunk_free);
+		memproc_clear(memproc);
 		free (memproc);
 	}
 }

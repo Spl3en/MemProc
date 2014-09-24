@@ -24,7 +24,7 @@ typedef enum {
 
 } MemType;
 
-// ------ Class declaration -------
+// ------ Struct declaration -------
 typedef
 struct _MemChunk
 {
@@ -50,7 +50,7 @@ void
 memchunk_init (MemChunk *mem, HANDLE hProc, MEMORY_BASIC_INFORMATION *meminfo);
 
 
-// ----------- Methods ------------
+// ----------- Functions ------------
 
 void
 memchunk_read_from_memory (MemChunk *mem);
