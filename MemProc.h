@@ -140,6 +140,9 @@ memproc_set_default_baseaddr (MemProc *mp, int default_baseaddr);
 void
 memblock_debug (MemBlock *mb);
 
+bool
+memproc_detected (MemProc *mp);
+
 // --------- Destructors ----------
 
 void

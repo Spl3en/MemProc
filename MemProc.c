@@ -19,6 +19,12 @@ memproc_new (char *process_name, char *window_name)
 	return mp;
 }
 
+bool
+memproc_detected (MemProc *mp)
+{
+	return (mp->proc != 0);
+}
+
 int
 memproc_is_dumped (MemProc *mp)
 {
