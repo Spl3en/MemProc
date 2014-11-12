@@ -11,7 +11,7 @@ memproc_new (char *process_name, char *window_name)
 	mp->memchunks = NULL;
 	mp->stype = SEARCH_TYPE_BYTES;
 	mp->pid = 0;
-	mp->process_name = process_name;
+	mp->process_name = strdup(process_name);
 	mp->window_name = window_name;
 	mp->base_addr = 0;
 	mp->default_baseaddr = 0;
@@ -105,6 +105,7 @@ memproc_refresh_handle (MemProc *mp)
 	{
 		// Process not active
 		mp->proc = NULL;
+		warning ("Process not found.");
 		return false;
 	}
 
@@ -126,6 +127,9 @@ memproc_refresh_handle (MemProc *mp)
 	if (mp->window_name != NULL)
 	{
 		mp->hwnd = get_hwnd_from_title (mp->window_name);
+		if (!mp->hwnd) {
+			warning ("Cannot find the window \"%s\".", mp->window_name);
+		}
 	}
 
 	return true;
