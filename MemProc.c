@@ -32,10 +32,11 @@ memproc_is_dumped (MemProc *mp)
 }
 
 void
-memproc_dump_details (MemProc *mp, int start, int end, int (*boolean_function) (MEMORY_BASIC_INFORMATION *, void *), void *arg)
+memproc_dump_details (MemProc *mp, int start, int end, int nbSections, int (*boolean_function) (MEMORY_BASIC_INFORMATION *, void *), void *arg)
 {
 	MEMORY_BASIC_INFORMATION meminfo;
 	int addr = start;
+	int curNbSections = 0;
 
 	if (!mp->proc)
 	{
@@ -48,6 +49,9 @@ memproc_dump_details (MemProc *mp, int start, int end, int (*boolean_function) (
 	while (1)
 	{
 		if (addr >= end && end != -1)
+			break;
+
+		if (curNbSections >= nbSections)
 			break;
 
 		if (VirtualQueryEx (mp->proc, (void *) addr, &meminfo, sizeof (meminfo)) == 0)
@@ -69,7 +73,7 @@ memproc_dump_details (MemProc *mp, int start, int end, int (*boolean_function) (
 		}
 
 		addr = ((unsigned int) meminfo.BaseAddress + (unsigned int) meminfo.RegionSize);
-
+		curNbSections++;
 	}
 }
 
@@ -85,7 +89,13 @@ memproc_dump_helper (MEMORY_BASIC_INFORMATION *meminfo, void *arg)
 void
 memproc_dump (MemProc *mp, int start, int end)
 {
-	memproc_dump_details (mp, start, end, memproc_dump_helper, NULL);
+	memproc_dump_details (mp, start, end, -1, memproc_dump_helper, NULL);
+}
+
+void
+memproc_dump_sections (MemProc *mp, int start, int nbSections)
+{
+	memproc_dump_details (mp, start, -1, nbSections, memproc_dump_helper, NULL);
 }
 
 void
