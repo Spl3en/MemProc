@@ -105,6 +105,9 @@ void
 memproc_dump (MemProc *mp, int start, int end);
 
 void
+memproc_dump_sections (MemProc *mp, int start, int nbSections);
+
+void
 memproc_dump_details (MemProc *mp, int start, int end, int nbSections, int (*boolean_function) (MEMORY_BASIC_INFORMATION *, void *), void *arg);
 
 int
