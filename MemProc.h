@@ -10,21 +10,9 @@
 // ---------- Includes ------------
 #include <stdlib.h>
 #include "MemChunk.h"
-#include "../BbQueue/BbQueue.h"
-#include "../Win32Tools/Win32Tools.h"
-
-#ifdef MEMPROC_EXPORT_FUNCTION
-	#ifdef WIN32
-		#ifdef EXPORT_FUNCTION
-			#undef EXPORT_FUNCTION
-		#endif
-		#define EXPORT_FUNCTION __declspec(dllexport)
-	#endif
-#endif
-
-#ifndef EXPORT_FUNCTION
-	#define EXPORT_FUNCTION
-#endif
+#include "BbQueue/BbQueue.h"
+#include "Win32Tools/Win32Tools.h"
+#include "Console/Console.h"
 
 // ---------- Defines -------------
 
@@ -145,6 +133,10 @@ memblock_debug (MemBlock *mb);
 
 bool
 memproc_detected (MemProc *mp);
+
+// Directly in the process
+DWORD
+mem_search (DWORD start, DWORD size, unsigned char *pattern, char *mask);
 
 // --------- Destructors ----------
 

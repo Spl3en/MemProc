@@ -1,4 +1,8 @@
 #include "MemProc.h"
+#include <string.h>
+
+#define __DEBUG_OBJECT__ "MemProc"
+#include "dbg/dbg.h"
 
 MemProc *
 memproc_new (char *process_name, char *window_name)
@@ -40,7 +44,7 @@ memproc_dump_details (MemProc *mp, int start, int end, int nbSections, int (*boo
 
 	if (!mp->proc)
 	{
-		warning ("Process pid=%d not found", mp->pid);
+		warn ("Process pid=%d not found", mp->pid);
 		return;
 	}
 
@@ -51,11 +55,14 @@ memproc_dump_details (MemProc *mp, int start, int end, int nbSections, int (*boo
 		if (addr >= end && end != -1)
 			break;
 
-		if (curNbSections >= nbSections)
+		if (nbSections != -1 && curNbSections >= nbSections) {
 			break;
+		}
 
-		if (VirtualQueryEx (mp->proc, (void *) addr, &meminfo, sizeof (meminfo)) == 0)
+		if (VirtualQueryEx (mp->proc, (void *) addr, &meminfo, sizeof (meminfo)) == 0) {
+			dbg ("VirtualQueryEx returned 0");
 			break;
+		}
 
 		if (boolean_function (&meminfo, arg))
 		{
@@ -115,21 +122,21 @@ memproc_refresh_handle (MemProc *mp)
 	{
 		// Process not active
 		mp->proc = NULL;
-		warning ("Process not found.");
+		warn ("Process \"%s\" not found.", mp->process_name);
 		return false;
 	}
 
 	// Get the process handle
 	if ((mp->proc = OpenProcess (PROCESS_ALL_ACCESS, false, mp->pid)) == 0)
 	{
-		warning ("Process is unable to be opened with all access.");
+		warn ("Process is unable to be opened with all access.");
 		return false;
 	}
 
 	// Get the base address
 	if ((mp->base_addr = get_baseaddr (mp->process_name)) == 0)
 	{
-		info ("Process %s not found.", mp->process_name);
+		dbg ("Process <%s> not found.", mp->process_name);
 		mp->base_addr = mp->default_baseaddr;
 	}
 
@@ -138,7 +145,7 @@ memproc_refresh_handle (MemProc *mp)
 	{
 		mp->hwnd = get_hwnd_from_title (mp->window_name);
 		if (!mp->hwnd) {
-			warning ("Cannot find the window \"%s\".", mp->window_name);
+			warn ("Cannot find the window \"%s\".", mp->window_name);
 		}
 	}
 
@@ -214,6 +221,24 @@ memblock_get_change (MemProc *mp, BbQueue *res)
 	return NULL;
 }
 
+DWORD
+mem_search (DWORD start, DWORD size, unsigned char *pattern, char *mask)
+{
+	int offset = 0;
+	int total = 0;
+
+	unsigned char * buffer = (char *) start;
+
+	do {
+		if ((offset = find_pattern (buffer + total, size, pattern, mask)) != -1) {
+			return (DWORD) buffer + total + offset;
+		}
+	} while (offset != -1);
+
+	return 0;
+}
+
+
 void
 memproc_search (MemProc *mp, unsigned char *pattern, char *mask, void (*pre_search) (MemChunk *, float prct), SearchType stype)
 {
@@ -224,7 +249,7 @@ memproc_search (MemProc *mp, unsigned char *pattern, char *mask, void (*pre_sear
 
 	if (mp->memchunks == NULL)
 	{
-		warning ("No memchunks stored, you must call %s () first", str_make_macro (memproc_dump));
+		warn ("No memchunks stored, you must call %s () first", STRINGIFY (memproc_dump));
 		return;
 	}
 
@@ -331,7 +356,7 @@ memproc_free (MemProc *memproc)
 {
 	if (memproc != NULL)
 	{
-		memproc_clear(memproc);
+		memproc_clear (memproc);
 		free (memproc);
 	}
 }

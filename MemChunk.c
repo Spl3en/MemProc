@@ -1,5 +1,8 @@
 #include "MemChunk.h"
 
+#define __DEBUG_OBJECT__ "MemChunk"
+#include "dbg/dbg.h"
+
 MemChunk *
 memchunk_new (HANDLE hProc, MEMORY_BASIC_INFORMATION *meminfo)
 {
@@ -12,7 +15,7 @@ memchunk_new (HANDLE hProc, MEMORY_BASIC_INFORMATION *meminfo)
 
 	mem->addr = (DWORD) meminfo->BaseAddress;
 	mem->size = meminfo->RegionSize;
-	debug("MemChunk size allocated = 0x%x", mem->size);
+	dbg ("MemChunk size allocated = 0x%x", mem->size);
 
 	mem->buffer =  malloc (meminfo->RegionSize);
 	memset(mem->buffer, 0, meminfo->RegionSize);
