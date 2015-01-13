@@ -225,13 +225,12 @@ DWORD
 mem_search (DWORD start, DWORD size, unsigned char *pattern, char *mask)
 {
 	int offset = 0;
-	int total = 0;
 
 	unsigned char * buffer = (char *) start;
 
 	do {
-		if ((offset = find_pattern (buffer + total, size, pattern, mask)) != -1) {
-			return (DWORD) buffer + total + offset;
+		if ((offset = find_pattern (buffer, size, pattern, mask)) != -1) {
+			return (DWORD) buffer + offset;
 		}
 	} while (offset != -1);
 
